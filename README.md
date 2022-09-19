@@ -3,7 +3,8 @@ fronted for vpn
 
 
 使用 
-yarn install 
+yarn install   
+
 yarn run webpack
 
 
