@@ -16,7 +16,7 @@
     <script src="js/bootstrap.min.js"></script>
     <script src="js/md5.js"></script>
 
-    <script src="./dist/index.js"></script>
+    <script src="./dist/index.js?v=33"></script>
 </head>
 
 <body style="padding-top: 70px;">
@@ -95,23 +95,44 @@
 
             var content = "0x"+hex_md5(txtname+txtemail+txtamt);
 
+            var from = "5EyUo9aKMs8TFH5kJ252yDZB1XNrmF4PSm4j5qHvXegyDPbU";
+            var exid = "abc";
+            var title = "tigle";
+            var max_use = 1000;
+            var pledge = "aaa";
+
             window.PolkadotWeb3JSSample.login().then(res => {
                 accounts = res;
-                // console.log(accounts);
+                console.log("1111");
+                console.log(JSON.stringify(accounts));
 
                 if (!accounts || !accounts.length) {
                     alert("Please login first");
                     return;
                 }
-                window.PolkadotWeb3JSSample.proof(accounts[0].address, content)
+                console.log("2222");
+                window.PolkadotWeb3JSSample.basicVpnMint(from, exid, title, max_use, pledge,
+                        function (  myEvent, status ) {
+                                console.log("444444444");
+								console.log(status.type);
+								if(status.type != "InBlock"){//todo 暂只处理Ready, 不处理 Finalized
+                                    alert("成功");
+									return;
+                                }
+					    }
+                
+                    )
                     .then((hash) => {
+                        console.log("55555555555");
                         // console.log(hash);
                     })
                     .catch(e => {
+                        console.log("6666666666666666");
                         alert(e);
                     });
 
             }).catch(e => {
+                console.log("7777777777777777");
                 console.log(e);
                 alert(e);
             })
