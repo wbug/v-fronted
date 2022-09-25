@@ -16,7 +16,7 @@
     <script src="js/bootstrap.min.js"></script>
     <script src="js/md5.js"></script>
 
-    <script src="./dist/index.js?v=33"></script>
+    <script src="./dist/index.js?v=37"></script>
 </head>
 
 <body style="padding-top: 70px;">
@@ -76,6 +76,10 @@
                 <button type="button" class="btn btn-primary" onclick="transfer()">Submit</button>
             </div>
 
+            <div class="col-md-8">
+                <button type="button" class="btn btn-primary" onclick="getMyVpns()">获取</button>
+            </div>
+
         </div>
         <!-- /.row -->
 
@@ -84,6 +88,52 @@
 
     <script type="text/javascript">
         var accounts = [];
+
+        function getMyVpns(){
+
+
+            var from = "5EyUo9aKMs8TFH5kJ252yDZB1XNrmF4PSm4j5qHvXegyDPbU";
+
+            window.PolkadotWeb3JSSample.ownerVpns(from,
+                function (res) {
+                    console.log("getVpninfo2222222222222222222222:" + JSON.stringify(res));
+                    //feng 这里有个严重的bug,  数据  [{"id":1,"exid":"{"b":102400,"c":30,"t":180}","title":"hk-test","maxUser":"0x0190","pledge":"0x0000000000000000000009184e72a000","price":2000000000000,"vpnUsedCount":16}]
+                    // 在BrowserActivity走一圈到了vpn.html后变成了
+                    // [{"id":1,"exid":"{"b":102400,"c":30,"t":180}","title":"hk-test","maxUser":"0x0190","pledge":"0x0000000000000000000009184e72a000","price":2000000000000,"vpnUsedCount":16}]
+                    //所以干脆在这处理了得了
+                    for (var i = 0; i < res.length; i++) {
+                        var item = res[i];
+                        try{
+                            var exjson = JSON.parse(item.exid);
+                            item.bandwidth = exjson.b;
+                            item.cycle = exjson.c;
+                            item.time = exjson.t;
+                        } catch (e) {
+
+                        }
+                        item.exid = "";
+                    }
+
+
+
+                }
+        
+            )
+            .then((hash) => {
+                console.log("55555555555");
+                // console.log(hash);
+            })
+            .catch(e => {
+                console.log("6666666666666666");
+                alert(e);
+            });
+
+
+
+
+
+
+        }
 
         function transfer() {
 

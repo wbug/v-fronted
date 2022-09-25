@@ -224,16 +224,24 @@ class PolkadotWeb3JSSample {
 		const api = await this.getApi();
 
 		api.query.web3VpnNft.ownerVpns.keys(addr, (vpnIds) => {
+			    console.log("222:" + JSON.stringify(vpnIds));
 				Promise.all(
 				vpnIds.map(({ args: [key1, key2] }) =>
 					api.query.web3VpnNft.vpns(key2)
 				)
 				
 			).then((vpnValues_) => {	
-								
+				console.log("3333:");		
+				console.log(vpnValues_);			
 				var  vpnValues = [];
-				for(var vpn_ in vpnValues_){
+				//var index =0;
+				for(var index in vpnValues_){
+					//var vpnId = vpnIds[index];
+					//index++;
+					var vpnId = vpnIds[index];
+					var vpn_ = vpnValues_[index];
 					const str = JSON.stringify(vpn_);
+					console.log("vpn:"+vpnId+":" + str);
 					const vpn = JSON.parse(str);
 					//var vpnPrice = vpnPriceList[i];
 					//var vpnUsedCount = vpnUsedCountList[i];
@@ -242,7 +250,7 @@ class PolkadotWeb3JSSample {
 					vpnValues.push(vpnJson);
 				}
 				//var vpnValues = vpnValues_.map(( [exId, title, count, pledge])=> [(Buffer.from(exId.buffer)).toString(), (Buffer.from(title.buffer)).toString(), count, pledge]	);
-				
+				console.log("333:" + JSON.stringify(vpnValues));
 				callback(vpnValues);
 
 			}).catch((error) => {
@@ -250,6 +258,83 @@ class PolkadotWeb3JSSample {
 				callback("");
 			})
 		});
+	}
+
+
+	
+
+
+	async advertiseVpns(areaId,  callback ) {
+		const api = await this.getApi();
+
+		api.query.web3VpnNft.advertiseVpns.keys(areaId, (doubleIds) => {
+ 			Promise.all(
+				doubleIds.map(({ args: [key1, key2] }) =>
+					api.query.web3VpnNft.advertiseVpns(key1, key2)
+				)
+				
+			).then((advertiseVpns_) => {	
+
+				//var advertiseVpns = advertiseVpns_.map(( [title, slogan, ids])=> [(Buffer.from(title.buffer)).toString(), (Buffer.from(slogan.buffer)).toString(),  ids]	);
+
+				const str = JSON.stringify(advertiseVpns_);
+				//console.log("88888:" + str);
+		  		const advertiseVpns = JSON.parse(str);
+
+				var arr = new Array();
+				doubleIds.forEach(({ args: [key1, key2] }, index, map) =>{
+	 				console.log("user:" + key2+  ", score:" + advertiseVpns[index]);
+					arr.push({user:key2, body: advertiseVpns[index]});
+	         
+				} );
+		
+				callback(arr);
+				//var advertiseVpns = advertiseVpns_.map(( [slogan, vpnIds])=> [(Buffer.from(slogan.buffer)).toString(), vpnIds, count, pledge]	);
+				//callback(advertiseVpns);
+
+			}).catch((error) => {
+				console.log(error)
+				callback("");
+			})
+		});
+	}
+
+
+
+	async getVpninfo( vpnId ) {
+		const api = await this.getApi();
+		
+		const vpn_ = await api.query.web3VpnNft.vpns(vpnId);
+		const str = JSON.stringify(vpn_);
+		const vpn = JSON.parse(str);
+		const vpnPrice = await api.query.web3VpnNft.vpnPrices(vpnId);
+		const vpnUsedCount = await api.query.web3VpnNft.vpnUsedCount(vpnId);	
+		var vpnJson = {id: vpnId, exid: vpn.exid, title: vpn.title, maxUser: vpn.max_use, pledge: vpn.pledge , price:vpnPrice, vpnUsedCount:vpnUsedCount  };	
+		return {vpn: vpnJson, price: vpnPrice, usedCount: vpnUsedCount};
+
+	}
+
+	async getVpninfoMulti( vpnIds ) {
+		const api = await this.getApi();
+
+		var advertiseVpns = [];
+				
+		const vpnList = await api.query.web3VpnNft.vpns.multi(vpnIds);
+		const vpnPriceList = await api.query.web3VpnNft.vpnPrices.multi(vpnIds);
+		const vpnUsedCountList = await api.query.web3VpnNft.vpnUsedCount.multi(vpnIds);	
+		for(var i in vpnIds){
+			var vpnId = vpnIds[i];
+			const str = JSON.stringify(vpnList[i]);
+			const vpn = JSON.parse(str);
+			var vpnPrice = vpnPriceList[i];
+			var vpnUsedCount = vpnUsedCountList[i];
+			var vpnJson  = {id: vpnId, exid: vpn.exid , title: vpn.title, maxUser: vpn.max_use, pledge: vpn.pledge , price:vpnPrice, vpnUsedCount:vpnUsedCount  };	
+			//console.log("88888:" + JSON.stringify(vpnJson));
+			advertiseVpns.push(vpnJson);
+		}
+		
+		return advertiseVpns;
+
 	}
 
 
