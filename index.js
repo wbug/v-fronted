@@ -299,6 +299,33 @@ class PolkadotWeb3JSSample {
 		});
 	}
 
+	async myAdvertiseVpns_2( areaId, from ) {
+		const api = await this.getApi();
+		
+		const vpns_ = await api.query.web3VpnNft.advertiseVpns(areaId, from);
+		const str = JSON.stringify(vpns_);
+		const vpns = JSON.parse(str);
+		
+		return vpns;
+
+	}
+
+	async myAdvertiseVpns(areaId, from,  callback ) {
+		const api = await this.getApi();
+
+		api.query.web3VpnNft.advertiseVpns(areaId, from, (vpns_) => {
+		  // Calculate the delta
+		  console.log( vpns_);
+		  const str = JSON.stringify(vpns_);
+		  const vpns = JSON.parse(str);
+
+		  console.log('advertiseVpns  ' + JSON.stringify(vpns));
+		  callback(vpns);
+		});
+
+	}
+
+
 
 
 	async getVpninfo( vpnId ) {
