@@ -1,22 +1,24 @@
-# v-fronted
-fronted for vpn 
+# v3-fronted-main
 
+## Project setup
+```
+npm install
+```
 
-使用 
-yarn install   
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
 
-yarn run webpack
+### Compiles and minifies for production
+```
+npm run build
+```
 
+### Lints and fixes files
+```
+npm run lint
+```
 
-然后用nginx 来使用网页：
-
-	server {
-        listen       8097;
-        server_name  localhost;
-		root E:/web3pioneer/code/v-fronted;
-		
-		location / {
-            index  index.html index.htm;
-        }
-		
-	}
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
